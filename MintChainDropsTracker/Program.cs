@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using EnergyStealLibrary;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
 class Program
@@ -8,7 +9,7 @@ class Program
         Console.WriteLine("Program entry\n");
 
         Console.WriteLine("Enter Auth Key: ");
-        string bearer = Console.ReadLine();
+        string bearer = Console.ReadLine().Trim();
 
         Console.WriteLine();
 
@@ -25,83 +26,117 @@ class Program
 
         Console.WriteLine();
 
-        using (HttpClient client = new HttpClient())
+        // Create an instance of your service
+        var energyService = new EnergyStealService(bearer);
+
+        Console.Write("Request Sent...");
+
+        // Set up progress reporting
+        var progress = new Progress<int>(percent =>
         {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
+            Console.Write($"\rProgress: {percent}%");
+        });
 
-            Console.Write("Request Sent...");
+        Console.WriteLine("\n");
 
-            while (startTreeId < stopTreeId)
+        // Get results and pass in the progress reporter
+        var results = await energyService.GetStealableEnergy(startTreeId, stopTreeId, minDrop, progress);
+
+        // Handle results
+        if (results.Count > 0)
+        {
+            foreach (var result in results)
             {
-                try
-                {
-                    var userId = await GetTreeUserIdAsync(client, startTreeId);
-
-                    if (userId.HasValue)
-                    {
-                        var energyData = await GetEnergyListAsync(client, userId.Value);
-
-                        if (energyData != null && energyData.Value.Amount > minDrop && energyData.Value.Stealable)
-                        {
-                            Console.WriteLine($"\nTreeId = {startTreeId}\nAmount Stealable = {energyData.Value.Amount}");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error processing TreeId {startTreeId}: {ex.Message}");
-                }
-
-                startTreeId++;
+                Console.WriteLine($"\nTreeId = {result.TreeId}\nAmount Stealable = {result.Amount}");
             }
+        }
+        else
+        {
+            Console.WriteLine("No stealable energy found in the given range.");
+            // Or log error
         }
 
         Console.WriteLine("\nEnd of range\nProgram Quitting...");
         Console.ReadLine();
-
-
     }
 
-    private static async Task<int?> GetTreeUserIdAsync(HttpClient client, int treeId)
-    {
-        var response = await client.GetAsync($"https://www.mintchain.io/api/tree/user-info?treeid={treeId}");
+    //    using (HttpClient client = new HttpClient())
+    //    {
+    //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            Console.WriteLine($"Failed to get user info for TreeId {treeId}, status code: {response.StatusCode}");
-            return null;
-        }
+    //        Console.Write("Request Sent...");
 
-        var content = await response.Content.ReadAsStringAsync();
-        dynamic data = JsonConvert.DeserializeObject(content);
+    //        while (startTreeId < stopTreeId)
+    //        {
+    //            try
+    //            {
+    //                var userId = await GetTreeUserIdAsync(client, startTreeId);
 
-        if (data.code == 10000)
-        {
-            return data.result.id;
-        }
+    //                if (userId.HasValue)
+    //                {
+    //                    var energyData = await GetEnergyListAsync(client, userId.Value);
 
-        Console.WriteLine($"TreeId {treeId}: {data.msg}");
-        return null;
-    }
+    //                    if (energyData != null && energyData.Value.Amount > minDrop && energyData.Value.Stealable)
+    //                    {
+    //                        Console.WriteLine($"\nTreeId = {startTreeId}\nAmount Stealable = {energyData.Value.Amount}");
+    //                    }
+    //                }
+    //            }
+    //            catch (Exception ex)
+    //            {
+    //                Console.WriteLine($"Error processing TreeId {startTreeId}: {ex.Message}");
+    //            }
 
-    private static async Task<(int Amount, bool Stealable)?> GetEnergyListAsync(HttpClient client, int userId)
-    {
-        var response = await client.GetAsync($"https://www.mintchain.io/api/tree/steal/energy-list?id={userId}");
+    //            startTreeId++;
+    //        }
+    //    }
 
-        if (!response.IsSuccessStatusCode)
-        {
-            Console.WriteLine($"Failed to get energy list for UserId {userId}, status code: {response.StatusCode}");
-            return null;
-        }
+    //    Console.WriteLine("\nEnd of range\nProgram Quitting...");
+    //    Console.ReadLine();
 
-        var content = await response.Content.ReadAsStringAsync();
-        dynamic data = JsonConvert.DeserializeObject(content);
 
-        if (data.code == 10000 && data.result.Count > 0)
-        {
-            return (data.result[0].amount, data.result[0].stealable);
-        }
+    //}
 
-        return null;
-    }
+    //private static async Task<int?> GetTreeUserIdAsync(HttpClient client, int treeId)
+    //{
+    //    var response = await client.GetAsync($"https://www.mintchain.io/api/tree/user-info?treeid={treeId}");
+
+    //    if (!response.IsSuccessStatusCode)
+    //    {
+    //        Console.WriteLine($"Failed to get user info for TreeId {treeId}, status code: {response.StatusCode}");
+    //        return null;
+    //    }
+
+    //    var content = await response.Content.ReadAsStringAsync();
+    //    dynamic data = JsonConvert.DeserializeObject(content);
+
+    //    if (data.code == 10000)
+    //    {
+    //        return data.result.id;
+    //    }
+
+    //    Console.WriteLine($"TreeId {treeId}: {data.msg}");
+    //    return null;
+    //}
+
+    //private static async Task<(int Amount, bool Stealable)?> GetEnergyListAsync(HttpClient client, int userId)
+    //{
+    //    var response = await client.GetAsync($"https://www.mintchain.io/api/tree/steal/energy-list?id={userId}");
+
+    //    if (!response.IsSuccessStatusCode)
+    //    {
+    //        Console.WriteLine($"Failed to get energy list for UserId {userId}, status code: {response.StatusCode}");
+    //        return null;
+    //    }
+
+    //    var content = await response.Content.ReadAsStringAsync();
+    //    dynamic data = JsonConvert.DeserializeObject(content);
+
+    //    if (data.code == 10000 && data.result.Count > 0)
+    //    {
+    //        return (data.result[0].amount, data.result[0].stealable);
+    //    }
+
+    //    return null;
+    //}
 }
