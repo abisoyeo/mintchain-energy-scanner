@@ -1,0 +1,253 @@
+program entry
+TreeId = 1010
+ Amount Stealable = 400
+TreeId = 1144
+ Amount Stealable = 424
+TreeId = 1187
+ Amount Stealable = 400
+TreeId = 1215
+ Amount Stealable = 477
+TreeId = 1233
+ Amount Stealable = 400
+
+
+TreeId = 1275
+ Amount Stealable = 400
+TreeId = 1320
+ Amount Stealable = 400
+TreeId = 1383
+ Amount Stealable = 400
+
+TreeId = 1494
+ Amount Stealable = 400
+
+TreeId = 1533
+ Amount Stealable = 429
+TreeId = 1564
+ Amount Stealable = 400
+TreeId = 1604
+ Amount Stealable = 400
+
+
+TreeId = 1673
+ Amount Stealable = 400
+TreeId = 1682
+ Amount Stealable = 400
+TreeId = 1814
+ Amount Stealable = 400
+
+TreeId = 1895
+ Amount Stealable = 400
+TreeId = 1918
+ Amount Stealable = 400
+TreeId = 1937
+ Amount Stealable = 400
+
+End of program
+
+program entry
+TreeId = 2000
+ Amount Stealable = 400
+
+TreeId = 2051
+ Amount Stealable = 400
+TreeId = 2074
+ Amount Stealable = 476
+TreeId = 2086
+ Amount Stealable = 400
+
+TreeId = 2103
+ Amount Stealable = 400
+TreeId = 2114
+ Amount Stealable = 573
+TreeId = 2124
+ Amount Stealable = 400
+
+TreeId = 2270
+ Amount Stealable = 456
+TreeId = 2272
+ Amount Stealable = 400
+TreeId = 2294
+ Amount Stealable = 400
+
+TreeId = 2409
+ Amount Stealable = 400
+TreeId = 2502
+ Amount Stealable = 400
+TreeId = 2512
+ Amount Stealable = 400
+TreeId = 2523
+ Amount Stealable = 400
+TreeId = 2534
+ Amount Stealable = 400
+TreeId = 2550
+ Amount Stealable = 400
+TreeId = 2562
+ Amount Stealable = 400
+
+TreeId = 2574
+ Amount Stealable = 470
+TreeId = 2589
+ Amount Stealable = 400
+TreeId = 2603
+ Amount Stealable = 480
+TreeId = 2605
+ Amount Stealable = 400
+
+TreeId = 2651
+ Amount Stealable = 400
+TreeId = 2678
+ Amount Stealable = 400
+
+TreeId = 2745
+ Amount Stealable = 449
+TreeId = 2750
+ Amount Stealable = 436
+
+TreeId = 2802
+ Amount Stealable = 400
+TreeId = 2903
+ Amount Stealable = 480
+
+TreeId = 2917
+ Amount Stealable = 400
+TreeId = 2931
+ Amount Stealable = 400
+TreeId = 2937
+ Amount Stealable = 400
+
+TreeId = 2950
+ Amount Stealable = 400
+TreeId = 2953
+ Amount Stealable = 480
+TreeId = 2958
+ Amount Stealable = 400
+
+TreeId = 2973
+ Amount Stealable = 400
+
+TreeId = 2992
+ Amount Stealable = 480
+TreeId = 3020
+ Amount Stealable = 400
+TreeId = 3069
+ Amount Stealable = 413
+
+TreeId = 3119
+ Amount Stealable = 400
+TreeId = 3149
+ Amount Stealable = 400
+TreeId = 3151
+ Amount Stealable = 480
+TreeId = 3152
+ Amount Stealable = 476
+TreeId = 3190
+ Amount Stealable = 422
+TreeId = 3202
+ Amount Stealable = 400
+TreeId = 3230
+ Amount Stealable = 400
+TreeId = 3236
+ Amount Stealable = 456
+
+TreeId = 3262
+ Amount Stealable = 474
+TreeId = 3303
+ Amount Stealable = 400
+
+TreeId = 3594
+ Amount Stealable = 400
+TreeId = 3628
+ Amount Stealable = 400
+TreeId = 3656
+ Amount Stealable = 400
+TreeId = 3662
+ Amount Stealable = 400
+TreeId = 3663
+ Amount Stealable = 400
+TreeId = 3665
+ Amount Stealable = 400
+TreeId = 3715
+ Amount Stealable = 439
+TreeId = 3717
+ Amount Stealable = 400
+TreeId = 3734
+ Amount Stealable = 420
+TreeId = 3751
+ Amount Stealable = 400
+
+TreeId = 3827
+ Amount Stealable = 421
+TreeId = 3832
+ Amount Stealable = 400
+TreeId = 3841
+ Amount Stealable = 407
+TreeId = 3891
+ Amount Stealable = 400
+TreeId = 3893
+ Amount Stealable = 400
+TreeId = 3922
+ Amount Stealable = 415
+TreeId = 3936
+ Amount Stealable = 478
+
+TreeId = 3989
+ Amount Stealable = 400
+
+TreeId = 4018
+ Amount Stealable = 480
+TreeId = 4056
+ Amount Stealable = 400
+TreeId = 4073
+ Amount Stealable = 480
+TreeId = 4102
+ Amount Stealable = 415
+TreeId = 4104
+ Amount Stealable = 400
+TreeId = 4241
+ Amount Stealable = 400
+TreeId = 4243
+ Amount Stealable = 413
+TreeId = 4270
+ Amount Stealable = 400
+TreeId = 4280
+ Amount Stealable = 480
+TreeId = 4284
+ Amount Stealable = 400
+TreeId = 4398
+ Amount Stealable = 407
+TreeId = 4429
+ Amount Stealable = 438
+TreeId = 4454
+ Amount Stealable = 400
+TreeId = 4463
+ Amount Stealable = 400
+TreeId = 4487
+ Amount Stealable = 400
+TreeId = 4502
+ Amount Stealable = 448
+
+TreeId = 4604
+ Amount Stealable = 400
+TreeId = 4647
+ Amount Stealable = 400
+TreeId = 4746
+ Amount Stealable = 473
+TreeId = 4748
+ Amount Stealable = 480
+TreeId = 4797
+ Amount Stealable = 400
+TreeId = 4865
+ Amount Stealable = 400
+TreeId = 4886
+ Amount Stealable = 400
+TreeId = 4925
+ Amount Stealable = 400
+TreeId = 4947
+ Amount Stealable = 400
+TreeId = 4965
+ Amount Stealable = 400
+TreeId = 4973
+ Amount Stealable = 400
+TreeId = 4992
+ Amount Stealable = 400
