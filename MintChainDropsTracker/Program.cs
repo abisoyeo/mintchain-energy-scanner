@@ -1,76 +1,107 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
-Console.WriteLine("Program entry\n");
-
-Console.WriteLine("Enter Auth Key: ");
-string bearer = Console.ReadLine();
-
-Console.WriteLine();
-
-Console.Write("Enter TreeId Start Search Range: ");
-int startTreeId = int.Parse(Console.ReadLine());
-
-Console.Write("Enter TreeId Stop Search Range: ");
-int stopTreeId = int.Parse(Console.ReadLine());
-
-Console.WriteLine();
-
-Console.Write("Enter Minimum Drop To Search From: ");
-int minDrop = int.Parse(Console.ReadLine());
-
-Console.WriteLine();
-
-
-using (HttpClient client = new HttpClient())
+class Program
 {
-    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
-
-    Console.Write("Request Sent...");
-
-    while (startTreeId < stopTreeId)
+    static async Task Main(string[] args)
     {
-        HttpResponseMessage treeIdResponseMessage = await client.GetAsync($"https://www.mintchain.io/api/tree/user-info?treeid={startTreeId}");
+        Console.WriteLine("Program entry\n");
 
-        var treeIdResponseBody = await treeIdResponseMessage.Content.ReadAsStringAsync();
-        dynamic treeIdDataItem = JsonConvert.DeserializeObject(treeIdResponseBody);
+        Console.WriteLine("Enter Auth Key: ");
+        string bearer = Console.ReadLine();
 
-        if (treeIdDataItem.code == 10000)
+        Console.WriteLine();
+
+        Console.Write("Enter TreeId Start Search Range: ");
+        int startTreeId = int.Parse(Console.ReadLine());
+
+        Console.Write("Enter TreeId Stop Search Range: ");
+        int stopTreeId = int.Parse(Console.ReadLine());
+
+        Console.WriteLine();
+
+        Console.Write("Enter Minimum Drop To Search From: ");
+        int minDrop = int.Parse(Console.ReadLine());
+
+        Console.WriteLine();
+
+        using (HttpClient client = new HttpClient())
         {
-            int id = treeIdDataItem.result.id;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
 
-            HttpResponseMessage energyResponseMessage = await client.GetAsync($"https://www.mintchain.io/api/tree/steal/energy-list?id={id}");
+            Console.Write("Request Sent...");
 
-            var responseBody = await energyResponseMessage.Content.ReadAsStringAsync();
-
-            dynamic dataItem = JsonConvert.DeserializeObject(responseBody);
-
-
-            if (dataItem.code == 10000 && dataItem.result.Count > 0)
+            while (startTreeId < stopTreeId)
             {
-                //Console.WriteLine($"Test to see program is working: TreeId = {id}\n Amount Stealable = {dataItem.result[0].amount}\n End of test");
-                // check for the result amount if its > 2000 and stealable = true
-                if (dataItem.result[0].amount > minDrop && dataItem.result[0].stealable == true)
-                    // if it is, get the id of the tree you appended to the uri and print to the console
-                    Console.WriteLine($"\nTreeId = {startTreeId}\nAmount Stealable = {dataItem.result[0].amount}");
+                try
+                {
+                    var userId = await GetTreeUserIdAsync(client, startTreeId);
+
+                    if (userId.HasValue)
+                    {
+                        var energyData = await GetEnergyListAsync(client, userId.Value);
+
+                        if (energyData != null && energyData.Value.Amount > minDrop && energyData.Value.Stealable)
+                        {
+                            Console.WriteLine($"\nTreeId = {startTreeId}\nAmount Stealable = {energyData.Value.Amount}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing TreeId {startTreeId}: {ex.Message}");
+                }
+
+                startTreeId++;
             }
         }
 
+        Console.WriteLine("\nEnd of range\nProgram Quitting...");
+        Console.ReadLine();
 
-        startTreeId++;
+
+    }
+
+    private static async Task<int?> GetTreeUserIdAsync(HttpClient client, int treeId)
+    {
+        var response = await client.GetAsync($"https://www.mintchain.io/api/tree/user-info?treeid={treeId}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"Failed to get user info for TreeId {treeId}, status code: {response.StatusCode}");
+            return null;
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        dynamic data = JsonConvert.DeserializeObject(content);
+
+        if (data.code == 10000)
+        {
+            return data.result.id;
+        }
+
+        Console.WriteLine($"TreeId {treeId}: {data.msg}");
+        return null;
+    }
+
+    private static async Task<(int Amount, bool Stealable)?> GetEnergyListAsync(HttpClient client, int userId)
+    {
+        var response = await client.GetAsync($"https://www.mintchain.io/api/tree/steal/energy-list?id={userId}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"Failed to get energy list for UserId {userId}, status code: {response.StatusCode}");
+            return null;
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        dynamic data = JsonConvert.DeserializeObject(content);
+
+        if (data.code == 10000 && data.result.Count > 0)
+        {
+            return (data.result[0].amount, data.result[0].stealable);
+        }
+
+        return null;
     }
 }
-
-Console.WriteLine("\nEnd of range\nProgram Quitting...");
-Console.ReadLine();
-
-
-
-
