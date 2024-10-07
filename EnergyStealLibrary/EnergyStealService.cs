@@ -7,16 +7,16 @@ namespace EnergyStealLibrary
     {
         private readonly HttpClient _client;
 
-        public EnergyStealService(string bearerToken)
+        public EnergyStealService()
         {
             _client = new HttpClient();
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
         }
 
         // Add an optional IProgress<int> parameter to report progress
-        public async Task<List<(int TreeId, int Amount)>> GetStealableEnergy(int startTreeId, int stopTreeId, int minDrop, IProgress<int> progress = null)
+        public async Task<List<StealableEnergy>>GetStealableEnergy(string bearerToken, int startTreeId, int stopTreeId, int minDrop, IProgress<int> progress = null)
         {
-            var results = new List<(int TreeId, int Amount)>();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+            var results = new List<StealableEnergy>();
             int totalItems = stopTreeId - startTreeId;
             int processedCount = 0;
 
@@ -32,7 +32,11 @@ namespace EnergyStealLibrary
 
                         if (energyData != null && energyData.Value.Amount > minDrop && energyData.Value.Stealable)
                         {
-                            results.Add((startTreeId, energyData.Value.Amount));
+                            results.Add( new StealableEnergy
+                            {
+                                TreeId = startTreeId,
+                                Amount = energyData.Value.Amount
+                            });
                         }
                     }
                 }
@@ -89,6 +93,12 @@ namespace EnergyStealLibrary
             }
 
             return null;
+        }
+
+        public class StealableEnergy
+        {
+            public int TreeId { get; set; }
+            public int Amount { get; set; }
         }
     }
 }

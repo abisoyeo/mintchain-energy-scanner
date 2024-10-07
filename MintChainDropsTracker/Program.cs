@@ -27,7 +27,7 @@ class Program
         Console.WriteLine();
 
         // Create an instance of your service
-        var energyService = new EnergyStealService(bearer);
+        var energyService = new EnergyStealService();
 
         Console.Write("Request Sent...");
 
@@ -40,7 +40,7 @@ class Program
         Console.WriteLine("\n");
 
         // Get results and pass in the progress reporter
-        var results = await energyService.GetStealableEnergy(startTreeId, stopTreeId, minDrop, progress);
+        var results = await energyService.GetStealableEnergy(bearer, startTreeId, stopTreeId, minDrop, progress);
 
         // Handle results
         if (results.Count > 0)
