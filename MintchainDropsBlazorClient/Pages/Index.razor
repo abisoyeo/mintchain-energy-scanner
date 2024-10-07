@@ -1,0 +1,82 @@
+﻿@page "/"
+@using System.Net.Http.Json
+@inject IHttpClientFactory factory
+@inject IJSRuntime JS
+
+
+<PageTitle>Index</PageTitle>
+
+<h1 class="text-center my-4">Enter Energy Details</h1>
+
+<EditForm Model="energyRequest" OnValidSubmit="HandleValidSubmit">
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <label for="authKey" class="form-label">Auth Key</label>
+            <InputText id="authKey" @bind-Value="energyRequest.AuthKey" class="form-control" placeholder="Enter Auth Key" />
+        </div>
+
+        <div class="col-md-3">
+            <label for="startTreeId" class="form-label">Start Tree ID</label>
+            <InputText id="startTreeId" @bind-Value="energyRequest.StartTreeId" class="form-control" placeholder="Enter Start Tree ID" />
+        </div>
+
+        <div class="col-md-3">
+            <label for="stopTreeId" class="form-label">Stop Tree ID</label>
+            <InputText id="stopTreeId" @bind-Value="energyRequest.StopTreeId" class="form-control" placeholder="Enter Stop Tree ID" />
+        </div>
+
+        <div class="col-md-3">
+            <label for="minDrop" class="form-label">Minimum Drop</label>
+            <InputText id="minDrop" @bind-Value="energyRequest.MinDrop" class="form-control" placeholder="Enter Minimum Drop" />
+        </div>
+    </div>
+
+    <div class="d-grid gap-2">
+        <button class="btn btn-success btn-lg" type="submit">Get Trees</button>
+    </div>
+</EditForm>
+
+@if (treeData is not null)
+{
+    <h2 class="mt-5 text-center">Tree Data</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var tree in treeData)
+        {
+            <div class="col">
+                <div class="card text-white bg-dark mb-3 shadow-lg">
+                    <div class="card-header">
+                        TreeId: @tree.TreeId
+                        <button class="btn btn-outline-secondary btn-sm float-end" @onclick="() => CopyTreeIdToClipboard(tree.TreeId)">Copy</button>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Energy Amount: <strong>@tree.Amount</strong></h5>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@code{
+    private EnergyRequestModel energyRequest = new();
+    private List<TreeResponseModel>? treeData;
+
+    private async void HandleValidSubmit()
+    {
+        var client = factory.CreateClient("api");
+
+        var info = await client.PostAsJsonAsync<EnergyRequestModel>("EnergySteal", energyRequest);
+
+        treeData = await info.Content.ReadFromJsonAsync<List<TreeResponseModel>>();
+
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    // Call the JS method to copy the treeId to clipboard
+    private async Task CopyTreeIdToClipboard(int treeId)
+    {
+        await JS.InvokeVoidAsync("copyTextToClipboard", treeId.ToString());
+    }
+}

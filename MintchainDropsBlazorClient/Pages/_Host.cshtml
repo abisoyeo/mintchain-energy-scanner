@@ -1,0 +1,18 @@
+﻿@page "/"
+@namespace MintchainDropsBlazorClient.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+
+<component type="typeof(App)" render-mode="ServerPrerendered" />
+
+<script>
+    function copyTextToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function () {
+            alert('Copied TreeId: ' + text);
+        }).catch(function (err) {
+            console.error('Could not copy text: ', err);
+        });
+    }
+</script>
