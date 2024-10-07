@@ -5,7 +5,11 @@ VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MintChainDropsConsoleClient", "MintChainDropsTracker\MintChainDropsConsoleClient.csproj", "{72C52855-E5F5-43C7-8A15-581FE623CFCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyStealLibrary", "EnergyStealLibrary\EnergyStealLibrary.csproj", "{C97C5FB3-F6B1-42C3-934D-1945FEB3E2ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyStealLibrary", "EnergyStealLibrary\EnergyStealLibrary.csproj", "{C97C5FB3-F6B1-42C3-934D-1945FEB3E2ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MintChainDropsApiService", "MintChainDropsApiService\MintChainDropsApiService.csproj", "{B947E595-2F98-440E-9257-23101CE62CB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintchainDropsBlazorClient", "MintchainDropsBlazorClient\MintchainDropsBlazorClient.csproj", "{C7A7CAAC-4165-4BC8-A7BC-DBD4FB0B026E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{C97C5FB3-F6B1-42C3-934D-1945FEB3E2ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C97C5FB3-F6B1-42C3-934D-1945FEB3E2ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C97C5FB3-F6B1-42C3-934D-1945FEB3E2ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B947E595-2F98-440E-9257-23101CE62CB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B947E595-2F98-440E-9257-23101CE62CB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B947E595-2F98-440E-9257-23101CE62CB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B947E595-2F98-440E-9257-23101CE62CB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7A7CAAC-4165-4BC8-A7BC-DBD4FB0B026E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7A7CAAC-4165-4BC8-A7BC-DBD4FB0B026E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7A7CAAC-4165-4BC8-A7BC-DBD4FB0B026E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7A7CAAC-4165-4BC8-A7BC-DBD4FB0B026E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
