@@ -4,7 +4,7 @@
 @inject IJSRuntime JS
 
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Mintchain Thief</PageTitle>
 
 <h1 class="text-center my-4">Enter Energy Details</h1>
 
@@ -36,11 +36,23 @@
     </div>
 </EditForm>
 
-@if (treeData is not null)
+@if (isLoading)
+{
+    <p>Loading, please wait...</p>
+}
+
+@if (errorMessage is not null)
+{
+    <div class="alert alert-danger">
+        <strong>Error: </strong>@errorMessage
+    </div>
+}
+
+@if (sortedTreeData is not null)
 {
     <h2 class="mt-5 text-center">Tree Data</h2>
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var tree in treeData)
+        @foreach (var tree in sortedTreeData)
         {
             <div class="col">
                 <div class="card text-white bg-dark mb-3 shadow-lg">
@@ -58,20 +70,52 @@
 }
 
 
-@code{
+@code {
     private EnergyRequestModel energyRequest = new();
     private List<TreeResponseModel>? treeData;
+    IOrderedEnumerable<TreeResponseModel>? sortedTreeData;
+    private bool isLoading = false;        // Indicates if the data is being fetched
+    private string? errorMessage = null;   // Holds error message if the request fails
 
-    private async void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
-        var client = factory.CreateClient("api");
+        try
+        {
+            isLoading = true;             // Set loading state to true
+            errorMessage = null;          // Reset error message
 
-        var info = await client.PostAsJsonAsync<EnergyRequestModel>("EnergySteal", energyRequest);
+            var client = factory.CreateClient("api");
 
-        treeData = await info.Content.ReadFromJsonAsync<List<TreeResponseModel>>();
+            // Send the request
+            var response = await client.PostAsJsonAsync<EnergyRequestModel>("EnergySteal", energyRequest);
 
-        await InvokeAsync(StateHasChanged);
+            if (response.IsSuccessStatusCode)
+            {
+                // Fetch the tree data
+                treeData = await response.Content.ReadFromJsonAsync<List<TreeResponseModel>>();
 
+                if (treeData is not null)
+                {
+                    // Sort the tree data
+                    sortedTreeData = treeData.OrderByDescending(n => n.Amount);
+                }
+            }
+            else
+            {
+                // Handle failure status
+                errorMessage = $"Failed to get trees. Status code: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any unexpected errors
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;  // Reset loading state
+            await InvokeAsync(StateHasChanged);  // Refresh the UI
+        }
     }
 
     // Call the JS method to copy the treeId to clipboard

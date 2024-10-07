@@ -10,7 +10,7 @@
 <script>
     function copyTextToClipboard(text) {
         navigator.clipboard.writeText(text).then(function () {
-            alert('Copied TreeId: ' + text);
+            console.log('Text copied to clipboard: ' + text);
         }).catch(function (err) {
             console.error('Could not copy text: ', err);
         });
