@@ -3,8 +3,7 @@
 @inject IHttpClientFactory factory
 @inject IJSRuntime JS
 
-
-<PageTitle>Mintchain Thief</PageTitle>
+<PageTitle>Energy Steal</PageTitle>
 
 <h1 class="text-center my-4">Enter Energy Details</h1>
 
@@ -32,23 +31,40 @@
     </div>
 
     <div class="d-grid gap-2">
-        <button class="btn btn-success btn-lg" type="submit">Get Trees</button>
+        <!-- Disable button while loading to prevent multiple clicks -->
+        <button class="btn btn-success btn-lg" type="submit" disabled="@isLoading">Get Trees</button>
     </div>
 </EditForm>
 
+<!-- Display a loading spinner or message when data is being fetched -->
 @if (isLoading)
 {
-    <p>Loading, please wait...</p>
-}
-
-@if (errorMessage is not null)
-{
-    <div class="alert alert-danger">
-        <strong>Error: </strong>@errorMessage
+    <div class="text-center mt-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading tree data, please wait...</p>
     </div>
 }
 
-@if (sortedTreeData is not null)
+<!-- Display error message if something went wrong -->
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-4" role="alert">
+        @errorMessage
+    </div>
+}
+
+<!-- Display a message if no data was found (204 response) -->
+@if (noContent)
+{
+    <div class="alert alert-info mt-4 text-center" role="alert">
+        No trees with energy found matching the criteria.
+    </div>
+}
+
+<!-- Display tree data if available -->
+@if (sortedTreeData is not null && sortedTreeData.Any())
 {
     <h2 class="mt-5 text-center">Tree Data</h2>
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -69,20 +85,20 @@
     </div>
 }
 
-
 @code {
     private EnergyRequestModel energyRequest = new();
-    private List<TreeResponseModel>? treeData;
     IOrderedEnumerable<TreeResponseModel>? sortedTreeData;
     private bool isLoading = false;        // Indicates if the data is being fetched
     private string? errorMessage = null;   // Holds error message if the request fails
+    private bool noContent = false;        // Indicates if no content was found
 
     private async Task HandleValidSubmit()
     {
         try
         {
-            isLoading = true;             // Set loading state to true
-            errorMessage = null;          // Reset error message
+            isLoading = true;              // Set loading state to true
+            errorMessage = null;           // Reset error message
+            noContent = false;             // Reset no content state
 
             var client = factory.CreateClient("api");
 
@@ -92,18 +108,45 @@
             if (response.IsSuccessStatusCode)
             {
                 // Fetch the tree data
-                treeData = await response.Content.ReadFromJsonAsync<List<TreeResponseModel>>();
+                var treeData = await response.Content.ReadFromJsonAsync<List<TreeResponseModel>>();
 
-                if (treeData is not null)
+                // If there's no data, set the noContent flag
+                if (treeData is null || !treeData.Any())
                 {
-                    // Sort the tree data
+                    noContent = true;
+                }
+                else
+                {
+                    // Sort the tree data by descending energy amount
                     sortedTreeData = treeData.OrderByDescending(n => n.Amount);
                 }
             }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                errorMessage = "An unknown error occurred while processing the request.";
+
+                // TODO: Fix issue with not getting custom error message from api, instead getting problem+json response
+
+                // If it's a 400 Bad Request, capture and display the error message
+                // var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponseModel>();
+                // if (errorResponse != null)
+                // {
+                //     errorMessage = errorResponse.Error;  // Display the error message from the API
+                // }
+                // else
+                // {
+                //     errorMessage = "An unknown error occurred while processing the request.";
+                // }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                // If it's a 204 No Content, set the noContent flag
+                noContent = true;
+            }
             else
             {
-                // Handle failure status
-                errorMessage = $"Failed to get trees. Status code: {response.StatusCode}";
+                // Handle other failure status codes
+                errorMessage = $"Unexpected error occurred. Status code: {response.StatusCode}";
             }
         }
         catch (Exception ex)
