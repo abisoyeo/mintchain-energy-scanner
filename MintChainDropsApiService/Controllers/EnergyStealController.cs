@@ -28,15 +28,28 @@ namespace MintChainDropsApiService.Controllers
                     request.MinDrop
                 );
 
-                // Return the result in the response
-                return new JsonResult(result);
+                // If there's an error message in the result, return a 400 Bad Request with the error message
+                if (!string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    return BadRequest(new { Message = "Error occurred while fetching stealable energy", Error = result.ErrorMessage });
+                }
+
+                // If no stealable energy is found, return a 204 No Content response
+                if (!result.StealableEnergies.Any())
+                {
+                    return NoContent(); // 204 status code
+                }
+
+                // Return the result data with 200 OK status code
+                return new JsonResult(result.StealableEnergies); // 200 status code
             }
             catch (Exception ex)
             {
-                // Handle exceptions gracefully and return a meaningful error response
-                return StatusCode(500, new { Message = "An error occurred while fetching stealable energy", Details = ex.Message });
+                // Handle exceptions gracefully and return a 500 Internal Server Error with the error details
+                return StatusCode(500, new { Message = "An internal error occurred while processing the request", Details = ex.Message });
             }
         }
+
     }
 
     // Define the request body structure
