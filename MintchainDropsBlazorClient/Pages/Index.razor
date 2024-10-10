@@ -107,18 +107,27 @@
 
             if (response.IsSuccessStatusCode)
             {
-                // Fetch the tree data
-                var treeData = await response.Content.ReadFromJsonAsync<List<TreeResponseModel>>();
-
-                // If there's no data, set the noContent flag
-                if (treeData is null || !treeData.Any())
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
+                    // If it's a 204 No Content, set the noContent flag
                     noContent = true;
                 }
+
                 else
                 {
-                    // Sort the tree data by descending energy amount
-                    sortedTreeData = treeData.OrderByDescending(n => n.Amount);
+                    // Fetch the tree data
+                    var treeData = await response.Content.ReadFromJsonAsync<List<TreeResponseModel>>();
+
+                    // If there's no data, set the noContent flag
+                    if (treeData is null || !treeData.Any())
+                    {
+                        noContent = true;
+                    }
+                    else
+                    {
+                        // Sort the tree data by descending energy amount
+                        sortedTreeData = treeData.OrderByDescending(n => n.Amount);
+                    }
                 }
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
@@ -137,11 +146,6 @@
                 // {
                 //     errorMessage = "An unknown error occurred while processing the request.";
                 // }
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-            {
-                // If it's a 204 No Content, set the noContent flag
-                noContent = true;
             }
             else
             {
